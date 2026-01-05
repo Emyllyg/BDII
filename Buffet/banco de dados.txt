@@ -1,0 +1,20 @@
+Criação do banco de dados:
+Para a criação do banco de dados é utilizado  o comando “CREATE DATABASE” seguido do nome do banco de dados.
+Já o comando “USE” é utilizado para informar qual banco de dados será usado para executar os comandos seguintes.
+
+Criação das Tabelas:
+Cliente:
+Para a criação das tabelas é utilizado o comando “CREATE TABLE” seguido do nome da tabela.
+A tabela Clientes possui os atributos id, nome, cpf, telefone e e-mail, denominando o atributo id como um auto incremento (sequência de identificação) e chave primária (identificação da tabela). Os demais com seus tipos (varchar, int), números de caracteres e  não nulos.  Nessa tabela é possível armazenar os dados do cliente.
+
+Menu:
+A tabela Menu possui os atributos ID, Entradas, Prato Principal, Sobremesas e Bebidas denominando o atributo ID como um auto incremento (sequência de identificação) e chave primária (identificação da tabela). Os demais com seus tipos (varchar, int), números de caracteres e  não nulos.  Nessa tabela é possível armazenar o cardápio oferecido pelo buffet.
+
+Reserva:
+A tabela Reserva possui os atributos ID, Menuid, Clienteid, Data Evento, Tipo Evento, Número Convidados e Local Evento, denominando o atributo ID como um auto incremento (sequência de identificação) e chave primária (identificação da tabela), incluindo as chave estrangeiras (relação entre tabelas) Menuod e Clienteid. Os demais com seus tipos (varchar, int e date), números de caracteres e  não nulos.  Nessa tabela é possível armazenar os dados de cadastro de uma reserva.
+
+Visualização das tabelas:
+
+Através do comando "Select" é possível visualizar a tabela com seus dados inseridos. 
+
+Por exemplo a tabela cliente onde é possível visualizar a identificação do cliente (id) cpf, telefone e email.

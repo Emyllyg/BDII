@@ -1,0 +1,10 @@
+um diagrama de entidade- relacionamento mostra como entidades(cliente,reserva,menu) se relacionam entre si.
+
+um cliente pode ter várias reservas, ou seja o relacionamento e de 1 para muitos (1:N) e cada reserva esta ligada a apenas um cliente, então o relacionamento seria de muitos para um (N:1).
+
+cada reserva pode ter vários itens do cardápio, e os mesmos itens podem ter em várias outras reservas. Então seria um relacionamento de muitos para muitos (N:N)
+
+
+Através do comando "INSERT INTO" é possível  adicionar dados em uma tabela.
+
+então na tabela cliente foram adicionados o nome, cpf, telefone e email daquele cliente. na tabela menu as opções de entrada, prato principal, sobremesa e bebidas. e na tabela reserva a identificação do cliente (id) a identificação do menu, a data do evento, o que é o evento, número de convidados e o local que vai ser aquele evento
