@@ -1,0 +1,16 @@
+
+o total de minutos ouvidos no ano e a porcentagem que você representa no top de ouvintes do mundo,
+o dia que você mais ouviu musicas no ano e os minutos desse dia,
+quantas musicas vc ouviu no ano,
+qual a musica que vc mais ouviu no ano com o nome e o artista 
+a musica que vc mais ouviu no ano e quantas vezes vc escutou e a data que vc começou a ouvir musica no ano,
+ meu top 5 de musicas e artistas mais ouvidas no ano
+quantos minutos você ouviu de podcasts o ano todo
+o tipo do podcast ouvido (historias criminais, tecnologia e negócios, entrevistas etc)
+os seus 3 podcasts mais ouvidos
+ selecione 3 meses do ano aleatórios e mostras para o usuário os 3 gêneros de musica e artista mais ouvidos desse mesmo
+quantos artistas vc ouviu todo o ano
+o arista que mais ouviu no ano e quantos minutos vc ouviu esse artista
+top 5 artistas mais ouvidos 
+no final mostrar o top 5 de artistas e musicas e os minutos mais ouvidos do ano
+

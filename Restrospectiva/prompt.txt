@@ -1,0 +1,167 @@
+-- Cria o Banco de Dados
+CREATE DATABASE IF NOT EXISTS streaming_retrospectiva;
+USE streaming_retrospectiva;
+
+-- ----------------------------------------------------------------------
+-- Tabela: Artista
+-- Armazena informações sobre os artistas/bandas.
+-- ----------------------------------------------------------------------
+CREATE TABLE Artista (
+    -- Chave Primária
+    artista_id INT PRIMARY KEY AUTO_INCREMENT COMMENT 'Identificador único do artista/banda.',
+    
+    nome VARCHAR(255) NOT NULL COMMENT 'Nome completo ou nome artístico.',
+    
+    genero_principal VARCHAR(100) COMMENT 'Gênero musical primário do artista (ex: Rock, Pop, Hip Hop).',
+    
+    pais_origem VARCHAR(100) COMMENT 'País de origem do artista.'
+) COMMENT 'Tabela de Artistas e Bandas.';
+
+
+-- ----------------------------------------------------------------------
+-- Tabela: Album
+-- Armazena informações sobre os álbuns lançados pelos artistas.
+-- ----------------------------------------------------------------------
+CREATE TABLE Album (
+    -- Chave Primária
+    album_id INT PRIMARY KEY AUTO_INCREMENT COMMENT 'Identificador único do álbum.',
+    
+    titulo VARCHAR(255) NOT NULL COMMENT 'Título do álbum.',
+    
+    ano_lancamento YEAR COMMENT 'Ano de lançamento do álbum (ex: 2023).',
+    
+    -- Chave Estrangeira: Liga o álbum ao artista
+    artista_id INT NOT NULL COMMENT 'ID do artista principal que lançou o álbum.',
+    
+    -- Restrições
+    FOREIGN KEY (artista_id) REFERENCES Artista(artista_id)
+        ON DELETE CASCADE -- Se o artista for deletado, seus álbuns também são.
+        ON UPDATE CASCADE
+) COMMENT 'Tabela de Álbuns Musicais.';
+
+
+-- ----------------------------------------------------------------------
+-- Tabela: Musica
+-- Armazena informações detalhadas sobre cada faixa musical.
+-- ----------------------------------------------------------------------
+CREATE TABLE Musica (
+    -- Chave Primária
+    musica_id INT PRIMARY KEY AUTO_INCREMENT COMMENT 'Identificador único da música.',
+    
+    titulo VARCHAR(255) NOT NULL COMMENT 'Título da faixa musical.',
+    
+    duracao_segundos INT NOT NULL COMMENT 'Duração da música em segundos.',
+    
+    genero_secundario VARCHAR(100) COMMENT 'Gênero musical específico da faixa (pode ser diferente do principal do artista).',
+    
+    -- Chave Estrangeira: Liga a música a um álbum (opcional para singles)
+    album_id INT COMMENT 'ID do álbum ao qual a música pertence (pode ser NULL para singles).',
+    
+    -- Chave Estrangeira: Artista principal (pode ser repetido se a música for um single sem álbum)
+    artista_principal_id INT NOT NULL COMMENT 'ID do artista principal da faixa.',
+    
+    -- Restrições
+    FOREIGN KEY (album_id) REFERENCES Album(album_id)
+        ON DELETE SET NULL -- Se o álbum for deletado, a música ainda existe (vira um single).
+        ON UPDATE CASCADE,
+    
+    FOREIGN KEY (artista_principal_id) REFERENCES Artista(artista_id)
+        ON DELETE RESTRICT -- Impede que o artista seja deletado se ainda tiver músicas.
+        ON UPDATE CASCADE
+) COMMENT 'Tabela de Músicas e Faixas.';
+
+
+-- ----------------------------------------------------------------------
+-- Tabela: Usuario
+-- Armazena informações sobre os usuários do serviço.
+-- ----------------------------------------------------------------------
+CREATE TABLE Usuario (
+    -- Chave Primária
+    usuario_id INT PRIMARY KEY AUTO_INCREMENT COMMENT 'Identificador único do usuário.',
+    
+    nome_usuario VARCHAR(50) NOT NULL UNIQUE COMMENT 'Nome de usuário (login) - deve ser único.',
+    
+    nome_completo VARCHAR(255) NOT NULL COMMENT 'Nome civil ou apelido do usuário.',
+    
+    email VARCHAR(255) UNIQUE COMMENT 'Endereço de e-mail do usuário (opcional, mas bom para unicidade).',
+    
+    data_cadastro DATE NOT NULL COMMENT 'Data em que o usuário se cadastrou no serviço.'
+) COMMENT 'Tabela de Usuários do Serviço de Streaming.';
+
+
+-- ----------------------------------------------------------------------
+-- Tabela: Historico_Reproducao
+-- Tabela central para a Retrospectiva. Registra cada reprodução de música.
+-- ----------------------------------------------------------------------
+CREATE TABLE Historico_Reproducao (
+    -- Chave Primária Composta
+    reproducao_id INT PRIMARY KEY AUTO_INCREMENT COMMENT 'ID único para cada evento de reprodução.',
+    
+    -- Chave Estrangeira: Liga a reprodução a um usuário
+    usuario_id INT NOT NULL COMMENT 'ID do usuário que reproduziu a música.',
+    
+    -- Chave Estrangeira: Liga a reprodução a uma música
+    musica_id INT NOT NULL COMMENT 'ID da música que foi reproduzida.',
+    
+    data_hora_reproducao DATETIME NOT NULL COMMENT 'Timestamp exato de quando a música foi reproduzida.',
+    
+    duracao_reproduzida_segundos INT COMMENT 'Tempo real que a música foi ouvida (útil para calcular "minutos ouvidos").',
+    
+    -- Restrições
+    FOREIGN KEY (usuario_id) REFERENCES Usuario(usuario_id)
+        ON DELETE CASCADE -- Se o usuário for deletado, seu histórico também.
+        ON UPDATE CASCADE,
+    
+    FOREIGN KEY (musica_id) REFERENCES Musica(musica_id)
+        ON DELETE CASCADE -- Se a música for deletada, remove seu histórico de reprodução.
+        ON UPDATE CASCADE,
+        
+    -- Restrição de verificação (CHECK) para garantir que a duração reproduzida não é negativa
+    CHECK (duracao_reproduzida_segundos >= 0)
+) COMMENT 'Tabela de Histórico de Reprodução dos Usuários.';
+
+
+-- ----------------------------------------------------------------------
+-- Tabela Opcional: Artistas_Secundarios
+-- Trata de participações (feats) em músicas.
+-- ----------------------------------------------------------------------
+CREATE TABLE Artistas_Secundarios (
+    -- Chave Primária Composta
+    musica_id INT NOT NULL COMMENT 'ID da música que tem participação.',
+    
+    artista_id INT NOT NULL COMMENT 'ID do artista convidado (feat).',
+    
+    PRIMARY KEY (musica_id, artista_id),
+    
+    -- Restrições
+    FOREIGN KEY (musica_id) REFERENCES Musica(musica_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    
+    FOREIGN KEY (artista_id) REFERENCES Artista(artista_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) COMMENT 'Tabela de Participações (feats) de artistas em músicas.';
+
+
+
+Qual é a Música Mais Tocada do Usuário X?
+
+SQL
+
+SELECT M.titulo, COUNT(H.musica_id) AS total_reproducoes
+FROM Historico_Reproducao H
+JOIN Musica M ON H.musica_id = M.musica_id
+WHERE H.usuario_id = [ID_DO_USUARIO]
+GROUP BY M.titulo
+ORDER BY total_reproducoes DESC
+LIMIT 1;
+
+
+Qual o total de Minutos Ouvidos pelo Usuário Y?
+
+SQL
+
+SELECT SUM(duracao_reproduzida_segundos) / 60 AS minutos_ouvidos_totais
+FROM Historico_Reproducao
+WHERE usuario_id = [ID_DO_USUARIO];
