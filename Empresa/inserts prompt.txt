@@ -1,0 +1,1 @@
+Gere os códigos dos inserts para cada uma dessas tabelas com conteúdos próximos a realidade de uma empresa que vende produtos importados da china, gere 5 registros para cada tabela iniciando pelas tabelas do lado 1 e depois gerando os inserts das tabelas que contém os relacionamentos (chaves estrangeiras)
